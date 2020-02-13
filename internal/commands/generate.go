@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path"
 	"path/filepath"
 	"sort"
 
@@ -20,53 +21,40 @@ func NewGenerateCommand() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			return runGenerateCommand(args[0])
+			if err := runGenerateCommand(args[0]); err != nil {
+				return fmt.Errorf("generate: %w", err)
+			}
+
+			return nil
 		},
 	}
 
 	return &cmd
 }
 
-func runGenerateCommand(output string) error {
-	path, err := os.Getwd()
+func runGenerateCommand(outputFile string) error {
+	workingDir, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("get working dir: %w", err)
 	}
 
-	files, err := getYamlFiles(path)
+	files, err := getYamlFiles(workingDir)
 	if err != nil {
 		return fmt.Errorf("get yaml files: %w", err)
 	}
 
-	prometheusRules, err := getPrometheusRules(files)
+	ruleGroups, err := getRuleGroups(files)
 	if err != nil {
 		return fmt.Errorf("get prometheus rules: %w", err)
 	}
 
-	sort.Slice(prometheusRules, func(i int, j int) bool {
-		return prometheusRules[i].Spec.Groups[0].Name < prometheusRules[j].Spec.Groups[0].Name
+	sort.Slice(ruleGroups, func(i int, j int) bool {
+		return ruleGroups[i].Name < ruleGroups[j].Name
 	})
 
-	var currentGroup string
-	doc := "# Alerts"
-	for _, prometheusRule := range prometheusRules {
-		if currentGroup != prometheusRule.Spec.Groups[0].Name {
-			currentGroup = prometheusRule.Spec.Groups[0].Name
-			doc += "\n## " + prometheusRule.Spec.Groups[0].Name + "\n"
-			doc += "|Name|Message|Severity|\n"
-			doc += "|---|---|---|\n"
-		}
-
-		for _, rule := range prometheusRule.Spec.Groups[0].Rules {
-			if rule.Alert == "" {
-				continue
-			}
-
-			doc += "|" + rule.Alert + "|" + rule.Annotations["message"] + "|" + rule.Labels["severity"] + "|\n"
-		}
-	}
-
-	err = ioutil.WriteFile(path+"/"+output, []byte(doc), os.ModePerm)
+	document := getDocumentation(ruleGroups)
+	outputPath := path.Join(workingDir, outputFile)
+	err = ioutil.WriteFile(outputPath, []byte(document), os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("write document: %w", err)
 	}
@@ -104,8 +92,8 @@ func getYamlFiles(path string) ([]string, error) {
 	return files, nil
 }
 
-func getPrometheusRules(files []string) ([]v1.PrometheusRule, error) {
-	var prometheusRules []v1.PrometheusRule
+func getRuleGroups(files []string) ([]v1.RuleGroup, error) {
+	var ruleGroups []v1.RuleGroup
 
 	for _, file := range files {
 		fileContent, err := ioutil.ReadFile(file)
@@ -114,7 +102,6 @@ func getPrometheusRules(files []string) ([]v1.PrometheusRule, error) {
 		}
 
 		var prometheusRule v1.PrometheusRule
-
 		err = yaml.Unmarshal(fileContent, &prometheusRule)
 		if err != nil {
 			continue
@@ -124,8 +111,45 @@ func getPrometheusRules(files []string) ([]v1.PrometheusRule, error) {
 			continue
 		}
 
-		prometheusRules = append(prometheusRules, prometheusRule)
+		for _, group := range prometheusRule.Spec.Groups {
+			hasAlert := false
+
+			for _, rule := range group.Rules {
+				if rule.Alert != "" {
+					hasAlert = true
+					break
+				}
+			}
+
+			if hasAlert {
+				ruleGroups = append(ruleGroups, group)
+			}
+		}
 	}
 
-	return prometheusRules, nil
+	return ruleGroups, nil
+}
+
+func getDocumentation(ruleGroups []v1.RuleGroup) string {
+	document := "# Alerts"
+
+	var currentGroup string
+	for _, ruleGroup := range ruleGroups {
+		if currentGroup != ruleGroup.Name {
+			currentGroup = ruleGroup.Name
+			document += "\n## " + ruleGroup.Name + "\n"
+			document += "|Name|Message|Severity|\n"
+			document += "|---|---|---|\n"
+		}
+
+		for _, rule := range ruleGroup.Rules {
+			if rule.Alert == "" {
+				continue
+			}
+
+			document += "|" + rule.Alert + "|" + rule.Annotations["message"] + "|" + rule.Labels["severity"] + "|\n"
+		}
+	}
+
+	return document
 }
