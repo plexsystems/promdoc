@@ -21,6 +21,8 @@ Run the following command in the root of your project to create a markdown file 
 $ promdoc generate alerts.md
 ```
 
+**NOTE:** The `summary` annotation on the `PrometheusRule` CRD is used for generating the summary on the document.
+
 ## Example
 
 Given the following `PrometheusRule` definitions:
@@ -40,7 +42,7 @@ spec:
     rules:
     - alert: KubeControllerManagerDown
       annotations:
-        message: KubeControllerManager has disappeared from Prometheus target discovery.
+        summary: KubeControllerManager has disappeared from Prometheus target discovery
         runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubecontrollermanagerdown
       expr: |
         absent(up{job="kube-controller-manager"}) > 0
@@ -64,7 +66,7 @@ spec:
     rules:
     - alert: AlertmanagerMembersInconsistent
       annotations:
-        message: Alertmanager has not found all other members of the cluster.
+        summary: Alertmanager has not found all other members of the cluster
       expr: |
         alertmanager_cluster_members{job="alertmanager-main",namespace="monitoring"}
           != on (service) GROUP_LEFT()
@@ -81,12 +83,12 @@ The generated documentation would be
 ## AlertManager
 |Name|Message|Severity|
 |---|---|---|
-|AlertmanagerMembersInconsistent|Alertmanager has not found all other members of the cluster.|critical|
+|AlertmanagerMembersInconsistent|Alertmanager has not found all other members of the cluster|critical|
 
 ## ControlPlane
 |Name|Message|Severity|
 |---|---|---|
-|KubeControllerManagerDown|KubeControllerManager has disappeared from Prometheus target discovery.|critical|
+|KubeControllerManagerDown|KubeControllerManager has disappeared from Prometheus target discovery|critical|
 
 
 
