@@ -7,7 +7,7 @@ import (
 )
 
 func trimSpaceNewlineInString(s string) string {
-	re := regexp.MustCompile(`\r?\n`)
+	re := regexp.MustCompile(`\r?\n|\| `)
 	return re.ReplaceAllString(s, " ")
 }
 
@@ -21,8 +21,8 @@ func RenderMarkdown(ruleGroups []v1.RuleGroup) string {
 		if currentGroup != ruleGroup.Name {
 			currentGroup = ruleGroup.Name
 			document += "\n## " + ruleGroup.Name + "\n"
-			document += "|Name|Summary|Message|Severity|\n"
-			document += "|---|---|---|---|\n"
+			document += "|Name|Summary|Message|Severity|Runbook\n"
+			document += "|---|---|---|---|---|\n"
 		}
 
 		for _, rule := range ruleGroup.Rules {
@@ -31,7 +31,7 @@ func RenderMarkdown(ruleGroups []v1.RuleGroup) string {
 			}
 
 			document += "|" + rule.Alert + "|" + rule.Annotations["summary"] + "|" + trimSpaceNewlineInString(
-				rule.Annotations["message"]) + "|" + rule.Labels["severity"] + "|\n"
+				rule.Annotations["message"]) + "|" + rule.Labels["severity"] + "|" + rule.Annotations["runbook_url"] + "|\n"
 		}
 	}
 
@@ -40,7 +40,7 @@ func RenderMarkdown(ruleGroups []v1.RuleGroup) string {
 
 func RenderCSV(ruleGroups []v1.RuleGroup) string {
 	var currentGroup string
-	document := "Name,Summary,Message,Severity\n"
+	document := "Name,Summary,Message,Severity,Runbook\n"
 	for _, ruleGroup := range ruleGroups {
 		if currentGroup != ruleGroup.Name {
 			currentGroup = ruleGroup.Name
@@ -53,7 +53,8 @@ func RenderCSV(ruleGroups []v1.RuleGroup) string {
 			}
 
 			document += rule.Alert + "," + rule.Annotations["summary"] + "," + trimSpaceNewlineInString(
-				rule.Annotations["message"]) + "," + rule.Labels["severity"] + "\n"
+				rule.Annotations["message"]) + "," + rule.Labels["severity"] +
+				"," + rule.Annotations["runbook_url"] + "\n"
 		}
 	}
 
