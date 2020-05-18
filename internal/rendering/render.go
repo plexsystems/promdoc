@@ -52,9 +52,9 @@ func RenderCSV(ruleGroups []v1.RuleGroup) string {
 				continue
 			}
 
-			document += rule.Alert + "," + rule.Annotations["summary"] + "," + trimSpaceNewlineInString(
-				rule.Annotations["message"]) + "," + rule.Labels["severity"] +
-				"," + rule.Annotations["runbook_url"] + "\n"
+			document += rule.Alert + ";" + rule.Annotations["summary"] + ";" + trimSpaceNewlineInString(
+				rule.Annotations["message"]) + ";" + rule.Labels["severity"] +
+				";" + rule.Annotations["runbook_url"] + "\n"
 		}
 	}
 
