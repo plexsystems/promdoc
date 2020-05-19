@@ -1,5 +1,10 @@
 # promdoc
 
+![logo](promdoc.png)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/plexsystems/promdoc)](https://goreportcard.com/report/github.com/plexsystems/promdoc)
+[![GitHub release](https://img.shields.io/github/release/plexsystems/promdoc.svg)](https://github.com/plexsystems/promdoc/releases)
+
 `promdoc` lets you automatically generate documentation from your [PrometheusRules](https://github.com/coreos/prometheus-operator/blob/master/Documentation/design.md#prometheusrule).
 
 ```
