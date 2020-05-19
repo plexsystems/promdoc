@@ -20,25 +20,31 @@ Feedback, feature requests, and contributions are welcome!
 
 ## Usage
 
-Run the following command in the root of your project to create a markdown file named `alerts.md` that contains your Prometheus alerts.
+Promdoc will generate the output in the format that matches the output file.
+
+For example, to generate markdown, run the following command in the root folder where you want `promdoc` to search for rules.
 
 ```console
 $ promdoc generate alerts.md
 ```
 
-### Flags
+To generate the output in `CSV`, you can run the same command, but rather than `.md`, use `.csv`
 
-#### --output
+```console
+$ promdoc generate alerts.csv
+```
 
-Outputs the PrometheusRules in different formats. Default is `markdown`.
+Supported output formats:
 
-*Currently supported formats: markdown, csv*
+- Markdown (.md)
+- CSV (.csv)
 
 ## Example
 
 Given the following `PrometheusRule` definitions:
 
 *controlplane-alerts.yaml*
+
 ```yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
@@ -58,6 +64,7 @@ spec:
 ```
 
 *alertmanager-alerts.yaml*
+
 ```yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
@@ -76,7 +83,13 @@ spec:
         severity: critical
 ```
 
-The generated documentation would be
+Running the generate command with a `.md` extension:
+
+```console
+$ promdoc generate alerts.md
+```
+
+Generates the following markdown:
 
 # Alerts
 

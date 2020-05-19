@@ -25,7 +25,7 @@ func Render(path string, outputType string) (string, error) {
 	}
 
 	switch outputType {
-	case "markdown":
+	case "md":
 		return RenderMarkdown(ruleGroups), nil
 	case "csv":
 		return RenderCSV(ruleGroups), nil

@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path"
+	"strings"
 
 	"github.com/spf13/cobra"
 
@@ -19,30 +20,30 @@ func NewGenerateCommand() *cobra.Command {
 		Args:  cobra.ExactArgs(1),
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			output, err := cmd.Flags().GetString("output")
-			if err != nil {
-				return fmt.Errorf("invalid argument: %w", err)
-			}
-
-			if err := runGenerateCommand(args[0], output); err != nil {
+			if err := runGenerateCommand(args[0]); err != nil {
 				return fmt.Errorf("generate: %w", err)
 			}
 
 			return nil
 		},
 	}
-	cmd.Flags().String("output", "markdown", "Output format: markdown, csv")
 
 	return &cmd
 }
 
-func runGenerateCommand(outputFile string, outputType string) error {
+func runGenerateCommand(outputFile string) error {
 	workingDir, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("get working dir: %w", err)
 	}
 
-	output, err := rendering.Render(workingDir, outputType)
+	fileTokens := strings.Split(outputFile, ".")
+	if len(fileTokens) == 0 {
+		return fmt.Errorf("get file extension: %w", err)
+	}
+
+	fileExtension := fileTokens[len(fileTokens)-1]
+	output, err := rendering.Render(workingDir, fileExtension)
 	if err != nil {
 		return fmt.Errorf("rendering: %w", err)
 	}

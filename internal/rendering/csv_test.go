@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-func TestMarkdown(t *testing.T) {
-	expected, err := ioutil.ReadFile("../../examples/markdown/expected.md")
+func TestCSV(t *testing.T) {
+	expected, err := ioutil.ReadFile("../../examples/csv/expected.csv")
 	if err != nil {
 		t.Fatal("read expected file")
 	}
 
-	actual, err := Render("../../examples/rule.yaml", "md")
+	actual, err := Render("../../examples/rule.yaml", "csv")
 	if err != nil {
 		t.Fatal("getting rule groups:", err)
 	}
