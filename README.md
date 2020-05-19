@@ -26,7 +26,13 @@ Run the following command in the root of your project to create a markdown file 
 $ promdoc generate alerts.md
 ```
 
-**NOTE:** The `summary` annotation on the `PrometheusRule` CRD is used for generating the summary on the document.
+### Flags
+
+#### --output
+
+Outputs the PrometheusRules in different formats. Default is `markdown`.
+
+*Currently supported formats: markdown, csv*
 
 ## Example
 
