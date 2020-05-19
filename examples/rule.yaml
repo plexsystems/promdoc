@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-rule
+spec:
+  groups:
+  - name: TestGroup
+    rules:
+    - alert: TestAlert
+      annotations:
+        summary: TestSummary
+        runbook_url: TestRunbookURL
+      labels:
+        severity: TestSeverity

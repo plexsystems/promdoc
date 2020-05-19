@@ -1,9 +1,14 @@
 # promdoc
 
-`promdoc` lets you automatically generate documentation from your [PrometheusRules](https://github.com/coreos/prometheus-operator/blob/master/Documentation/design.md#prometheusrule).
+![logo](promdoc.png)
+
+[![Go Report Card](https://goreportcard.com/badge/github.com/plexsystems/promdoc)](https://goreportcard.com/report/github.com/plexsystems/promdoc)
+[![GitHub release](https://img.shields.io/github/release/plexsystems/promdoc.svg)](https://github.com/plexsystems/promdoc/releases)
+
+`promdoc` automatically generates documentation from your [PrometheusRules](https://github.com/coreos/prometheus-operator/blob/master/Documentation/design.md#prometheusrule).
 
 ```
-NOTE: This project is currently a work in progress. 
+NOTE: This project is currently a work in progress.
 Feedback, feature requests, and contributions are welcome!
 ```
 
@@ -27,15 +32,12 @@ $ promdoc generate alerts.md
 
 Given the following `PrometheusRule` definitions:
 
-*kubecontrollermanagerdown-alert.yaml*
+*controlplane-alerts.yaml*
 ```yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  labels:
-    prometheus: k8s
-    role: alert-rules
-  name: kubecontrollermanagerdown-alerts
+  name: controlplane-alerts
 spec:
   groups:
   - name: ControlPlane
@@ -43,23 +45,18 @@ spec:
     - alert: KubeControllerManagerDown
       annotations:
         summary: KubeControllerManager has disappeared from Prometheus target discovery
-        runbook_url: https://github.com/kubernetes-monitoring/kubernetes-mixin/tree/master/runbook.md#alert-name-kubecontrollermanagerdown
-      expr: |
-        absent(up{job="kube-controller-manager"}) > 0
-      for: 15m
+        runbook_url: https://runbook.com/kubecontrollermanagerdown
+      expr: expression()
       labels:
         severity: critical
 ```
 
-*alertmanagermembersinconsistent-alerts.yaml*
+*alertmanager-alerts.yaml*
 ```yaml
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  labels:
-    role: alert-rules
-  name: alertmanagermembersinconsistent-alerts
-  namespace: monitoring
+  name: alertmanager-alerts
 spec:
   groups:
   - name: AlertManager
@@ -67,28 +64,24 @@ spec:
     - alert: AlertmanagerMembersInconsistent
       annotations:
         summary: Alertmanager has not found all other members of the cluster
-      expr: |
-        alertmanager_cluster_members{job="alertmanager-main",namespace="monitoring"}
-          != on (service) GROUP_LEFT()
-        count by (service) (alertmanager_cluster_members{job="alertmanager-main",namespace="monitoring"})
-      for: 5m
+        runbook_url: https://runbook.com/alertmanagermembersinconsistent
+      expr: expression()
       labels:
         severity: critical
 ```
 
 The generated documentation would be
 
-## Alerts
+# Alerts
 
 ## AlertManager
-|Name|Message|Severity|
-|---|---|---|
-|AlertmanagerMembersInconsistent|Alertmanager has not found all other members of the cluster|critical|
+
+|Name|Summary|Severity|Runbook|
+|---|---|---|---|
+|AlertmanagerMembersInconsistent|Alertmanager has not found all other members of the cluster|critical|[https://runbook.com/alertmanagermembersinconsistent](https://runbook.com/alertmanagermembersinconsistent)|
 
 ## ControlPlane
-|Name|Message|Severity|
-|---|---|---|
-|KubeControllerManagerDown|KubeControllerManager has disappeared from Prometheus target discovery|critical|
 
-
-
+|Name|Summary|Severity|Runbook|
+|---|---|---|---|
+|KubeControllerManagerDown|KubeControllerManager has disappeared from Prometheus target discovery|critical|[https://runbook.com/kubecontrollermanagerdown](https://runbook.com/kubecontrollermanagerdown)|

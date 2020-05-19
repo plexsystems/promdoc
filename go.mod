@@ -1,6 +1,6 @@
 module github.com/plexsystems/promdoc
 
-go 1.13
+go 1.14
 
 require (
 	github.com/coreos/prometheus-operator v0.36.0
