@@ -16,7 +16,7 @@ Feedback, feature requests, and contributions are welcome!
 
 ### From source
 
-`go get github.com/plexsystems/promdoc`
+`GO111MODULE=on go get github.com/plexsystems/promdoc`
 
 ## Usage
 
