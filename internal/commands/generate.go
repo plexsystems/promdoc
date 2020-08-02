@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
-	"path"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -41,26 +41,27 @@ func NewGenerateCommand() *cobra.Command {
 }
 
 func runGenerateCommand() error {
-	out := viper.GetString("out")
-	outputDir, outputFile := path.Split(out)
+	outputDir := filepath.Clean(viper.GetString("out"))
+	outputFile := "alerts.md"
+	if outExt := filepath.Ext(outputDir); len(outExt) > 0 {
+		outputDir, outputFile = filepath.Split(outputDir)
+	}
+
 	workingDir, err := os.Getwd()
 	if err != nil {
 		return fmt.Errorf("get working dir: %w", err)
 	}
-	if outputDir == "" {
-		outputDir = workingDir
-	}
-	if outputFile == "" {
-		outputFile = "alerts.md"
-	}
 
-	fileExtension := path.Ext(outputFile)
+	fileExtension := filepath.Ext(outputFile)
 	output, err := rendering.Render(workingDir, fileExtension)
 	if err != nil {
 		return fmt.Errorf("rendering: %w", err)
 	}
 
-	outputPath := path.Join(outputDir, outputFile)
+	if outputDir == "" {
+		outputDir = workingDir
+	}
+	outputPath := filepath.Join(outputDir, outputFile)
 	err = ioutil.WriteFile(outputPath, []byte(output), os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("write document: %w", err)
