@@ -41,10 +41,9 @@ func NewGenerateCommand() *cobra.Command {
 }
 
 func runGenerateCommand() error {
-	outputDir := filepath.Clean(viper.GetString("out"))
-	outputFile := "alerts.md"
-	if outExt := filepath.Ext(outputDir); len(outExt) > 0 {
-		outputDir, outputFile = filepath.Split(outputDir)
+	outputPath := filepath.Clean(viper.GetString("out"))
+	if filepath.Ext(outputPath) == "" {
+		outputPath = filepath.Join(outputPath, "alerts.md")
 	}
 
 	workingDir, err := os.Getwd()
@@ -52,16 +51,11 @@ func runGenerateCommand() error {
 		return fmt.Errorf("get working dir: %w", err)
 	}
 
-	fileExtension := filepath.Ext(outputFile)
-	output, err := rendering.Render(workingDir, fileExtension)
+	output, err := rendering.Render(workingDir, filepath.Ext(outputPath))
 	if err != nil {
 		return fmt.Errorf("rendering: %w", err)
 	}
 
-	if outputDir == "" {
-		outputDir = workingDir
-	}
-	outputPath := filepath.Join(outputDir, outputFile)
 	err = ioutil.WriteFile(outputPath, []byte(output), os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("write document: %w", err)
