@@ -15,7 +15,7 @@ import (
 // NewGenerateCommand creates a new generate command
 func NewGenerateCommand() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   "generate",
+		Use:   "generate <directory>",
 		Short: "Generate documentation from a given folder",
 
 		PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -26,7 +26,12 @@ func NewGenerateCommand() *cobra.Command {
 		},
 
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := runGenerateCommand(); err != nil {
+			path := "."
+			if len(args) > 0 {
+				path = args[0]
+			}
+
+			if err := runGenerateCommand(path); err != nil {
 				return fmt.Errorf("generate: %w", err)
 			}
 
@@ -34,24 +39,18 @@ func NewGenerateCommand() *cobra.Command {
 		},
 	}
 
-	cmd.Flags().StringP("out", "o", "alerts.md",
-		"file name or path for the output-file")
+	cmd.Flags().StringP("out", "o", "alerts.md", "File name or directory for the alert documentation")
 
 	return &cmd
 }
 
-func runGenerateCommand() error {
+func runGenerateCommand(path string) error {
 	outputPath := filepath.Clean(viper.GetString("out"))
 	if filepath.Ext(outputPath) == "" {
 		outputPath = filepath.Join(outputPath, "alerts.md")
 	}
 
-	workingDir, err := os.Getwd()
-	if err != nil {
-		return fmt.Errorf("get working dir: %w", err)
-	}
-
-	output, err := rendering.Render(workingDir, filepath.Ext(outputPath))
+	output, err := rendering.Render(path, filepath.Ext(outputPath))
 	if err != nil {
 		return fmt.Errorf("rendering: %w", err)
 	}
