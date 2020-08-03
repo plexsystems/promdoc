@@ -19,14 +19,20 @@ Promdoc will generate the output in the format that matches the output file.
 
 For example, to generate markdown, run the following command in the root folder where you want `promdoc` to search for rules.
 
-```console
-$ promdoc generate alerts.md
+```shell
+$ promdoc generate
+```
+
+Optionally, you can specify a directory to generate alerts for. This will look at the specified directory and its subdirectories:
+
+```shell
+$ promdoc generate myalertsdirectory
 ```
 
 To generate the output in `CSV`, you can run the same command, but rather than `.md`, use `.csv`
 
-```console
-$ promdoc generate alerts.csv
+```shell
+$ promdoc generate --out alerts.csv
 ```
 
 **Supported output formats:**
