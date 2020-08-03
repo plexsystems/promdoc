@@ -10,9 +10,10 @@ import (
 // NewDefaultCommand creates a new default command
 func NewDefaultCommand() *cobra.Command {
 	cmd := cobra.Command{
-		Use:   path.Base(os.Args[0]),
-		Short: "promdoc",
-		Long:  "A cli tool to create documentation from Prometheus rules",
+		Use:     path.Base(os.Args[0]),
+		Short:   "promdoc",
+		Long:    "A cli tool to create documentation from Prometheus rules",
+		Version: "0.5.0",
 	}
 
 	cmd.AddCommand(NewGenerateCommand())
