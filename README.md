@@ -9,9 +9,9 @@
 
 ## Installation
 
-### From source
-
 `GO111MODULE=on go get github.com/plexsystems/promdoc`
+
+Binaries are also provided on the [releases](https://github.com/plexsystems/promdoc/releases) page.
 
 ## Usage
 
@@ -29,7 +29,7 @@ Optionally, you can specify a directory to generate alerts for. This will look a
 $ promdoc generate myalertsdirectory
 ```
 
-To generate the output in `CSV`, you can run the same command, but rather than `.md`, use `.csv`
+To generate the output in `CSV`, include the `.csv` extension in the output:
 
 ```shell
 $ promdoc generate --out alerts.csv
