@@ -11,8 +11,7 @@ import (
 func NewDefaultCommand() *cobra.Command {
 	cmd := cobra.Command{
 		Use:     path.Base(os.Args[0]),
-		Short:   "promdoc",
-		Long:    "A cli tool to create documentation from Prometheus rules",
+		Short:   "Create documentation from Prometheus rules",
 		Version: "0.5.0",
 	}
 

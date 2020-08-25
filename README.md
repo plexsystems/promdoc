@@ -15,7 +15,7 @@ Binaries are also provided on the [releases](https://github.com/plexsystems/prom
 
 ## Usage
 
-Promdoc will generate the output in the format that matches the output file.
+`promdoc` will generate the output in the format that matches the output file.
 
 For example, to generate markdown, run the following command in the root folder where you want `promdoc` to search for rules.
 

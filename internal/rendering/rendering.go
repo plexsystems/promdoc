@@ -49,8 +49,7 @@ func getRuleGroups(path string) ([]v1.RuleGroup, error) {
 		}
 
 		var prometheusRule v1.PrometheusRule
-		err = yaml.Unmarshal(fileContent, &prometheusRule)
-		if err != nil {
+		if err := yaml.Unmarshal(fileContent, &prometheusRule); err != nil {
 			continue
 		}
 
@@ -59,8 +58,8 @@ func getRuleGroups(path string) ([]v1.RuleGroup, error) {
 		}
 
 		for _, group := range prometheusRule.Spec.Groups {
-			hasAlert := false
 
+			var hasAlert bool
 			for _, rule := range group.Rules {
 				if rule.Alert != "" {
 					hasAlert = true

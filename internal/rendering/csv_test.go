@@ -11,7 +11,7 @@ func TestCSV(t *testing.T) {
 		t.Fatal("read expected file")
 	}
 
-	actual, err := Render("../../examples/rule.yaml", "csv")
+	actual, err := Render("../../examples/rule.yaml", ".csv")
 	if err != nil {
 		t.Fatal("getting rule groups:", err)
 	}

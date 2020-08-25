@@ -45,18 +45,17 @@ func NewGenerateCommand() *cobra.Command {
 }
 
 func runGenerateCommand(path string) error {
-	outputPath := filepath.Clean(viper.GetString("out"))
+	outputPath := viper.GetString("out")
 	if filepath.Ext(outputPath) == "" {
 		outputPath = filepath.Join(outputPath, "alerts.md")
 	}
 
 	output, err := rendering.Render(path, filepath.Ext(outputPath))
 	if err != nil {
-		return fmt.Errorf("rendering: %w", err)
+		return fmt.Errorf("render: %w", err)
 	}
 
-	err = ioutil.WriteFile(outputPath, []byte(output), os.ModePerm)
-	if err != nil {
+	if err := ioutil.WriteFile(outputPath, []byte(output), os.ModePerm); err != nil {
 		return fmt.Errorf("write document: %w", err)
 	}
 

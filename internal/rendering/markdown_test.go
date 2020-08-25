@@ -11,7 +11,7 @@ func TestMarkdown(t *testing.T) {
 		t.Fatal("read expected file")
 	}
 
-	actual, err := Render("../../examples/rule.yaml", "md")
+	actual, err := Render("../../examples/rule.yaml", ".md")
 	if err != nil {
 		t.Fatal("getting rule groups:", err)
 	}
