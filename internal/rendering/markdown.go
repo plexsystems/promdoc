@@ -34,10 +34,10 @@ func RenderMarkdown(ruleGroups []promv1.RuleGroup) string {
 			document += "## " + ruleGroup.Name
 			document += "\n\n"
 
-			document += "|Name|Summary|Severity|Runbook|"
+			document += "|Name|Summary|Description|Severity|Runbook|"
 			document += "\n"
 
-			document += "|---|---|---|---|"
+			document += "|---|---|---|---|---|"
 			document += "\n"
 		}
 
@@ -46,15 +46,22 @@ func RenderMarkdown(ruleGroups []promv1.RuleGroup) string {
 				continue
 			}
 
-			summary := rule.Annotations["summary"]
+			var summary string
+			if val, ok := rule.Annotations["summary"]; ok {
+				summary = val
+			} else if val, ok := rule.Annotations["description"]; ok {
+				summary = val
+			} else if val, ok := rule.Annotations["message"]; ok {
+				summary = replacePromQLInString(trimSpaceNewlineInString(val))
+			}
+			description := trimSpaceNewlineInString(rule.Annotations["description"])
 			severity := rule.Labels["severity"]
-
 			runbookURL := rule.Annotations["runbook_url"]
 			if runbookURL != "" {
 				runbookURL = fmt.Sprintf("[%s](%s)", runbookURL, runbookURL)
 			}
 
-			document += fmt.Sprintf("|%s|%s|%s|%s|", rule.Alert, summary, severity, runbookURL)
+			document += fmt.Sprintf("|%s|%s|%s|%s|%s", rule.Alert, summary, description, severity, runbookURL)
 			document += "\n"
 		}
 	}

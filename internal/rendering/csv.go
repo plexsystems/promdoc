@@ -8,19 +8,24 @@ import (
 
 // RenderCSV renders CSV
 func RenderCSV(ruleGroups []promv1.RuleGroup) string {
-	document := "Name,RuleGroup,Summary,Message,Severity,Runbook\n"
+	document := "Name,RuleGroup,Summary,Description,Severity,Runbook\n"
 	for _, ruleGroup := range ruleGroups {
 		for _, rule := range ruleGroup.Rules {
 			if rule.Alert == "" {
 				continue
 			}
 
-			summary := rule.Annotations["summary"]
-			message := trimSpaceNewlineInString(rule.Annotations["message"])
+			var summary string
+			if val, ok := rule.Annotations["summary"]; ok {
+				summary = val
+			} else if val, ok := rule.Annotations["message"]; ok {
+				summary = replacePromQLInString(trimSpaceNewlineInString(val))
+			}
+			description := trimSpaceNewlineInString(rule.Annotations["description"])
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
 
-			document += fmt.Sprintf("%s,%s,%s,%s,%s,%s\n", rule.Alert, ruleGroup.Name, summary, message, severity, runbookURL)
+			document += fmt.Sprintf("%s,%s,%s,%s,%s,%s\n", rule.Alert, ruleGroup.Name, summary, description, severity, runbookURL)
 		}
 	}
 
