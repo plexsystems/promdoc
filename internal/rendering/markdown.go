@@ -61,7 +61,7 @@ func RenderMarkdown(ruleGroups []promv1.RuleGroup) string {
 				runbookURL = fmt.Sprintf("[%s](%s)", runbookURL, runbookURL)
 			}
 
-			document += fmt.Sprintf("|%s|%s|%s|%s|%s", rule.Alert, summary, description, severity, runbookURL)
+			document += fmt.Sprintf("|%s|%s|%s|%s|%s|", rule.Alert, summary, description, severity, runbookURL)
 			document += "\n"
 		}
 	}
