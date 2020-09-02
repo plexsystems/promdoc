@@ -5,13 +5,13 @@ import (
 	"testing"
 )
 
-func TestCSV(t *testing.T) {
+func testCSV(t *testing.T, filename string) {
 	expected, err := ioutil.ReadFile("../../examples/csv/expected.csv")
 	if err != nil {
 		t.Fatal("read expected file")
 	}
 
-	actual, err := Render("../../examples/rule.yaml", ".csv")
+	actual, err := Render(filename, ".csv")
 	if err != nil {
 		t.Fatal("getting rule groups:", err)
 	}
@@ -19,4 +19,11 @@ func TestCSV(t *testing.T) {
 	if string(expected) != actual {
 		t.Error("rendered markdown did not match expected output")
 	}
+}
+func TestCSVWithDescription(t *testing.T) {
+	testCSV(t, "../../examples/rule.yaml")
+}
+
+func TestCSVWithMessage(t *testing.T) {
+	testCSV(t, "../../examples/rule2.yaml")
 }

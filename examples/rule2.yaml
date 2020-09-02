@@ -9,7 +9,7 @@ spec:
     - alert: TestAlert
       annotations:
         summary: TestSummary
-        description: TestDescription
+        message: TestDescription
         runbook_url: TestRunbookURL
       labels:
         severity: TestSeverity

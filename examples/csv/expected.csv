@@ -1,2 +1,2 @@
-Name,RuleGroup,Summary,Message,Severity,Runbook
-TestAlert,TestGroup,TestSummary,,TestSeverity,TestRunbookURL
+Name,RuleGroup,Summary,Description,Severity,Runbook
+TestAlert,TestGroup,TestSummary,TestDescription,TestSeverity,TestRunbookURL
