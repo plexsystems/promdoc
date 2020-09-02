@@ -15,13 +15,13 @@ func RenderCSV(ruleGroups []promv1.RuleGroup) string {
 				continue
 			}
 
-			var summary string
-			if val, ok := rule.Annotations["summary"]; ok {
-				summary = val
+			summary := rule.Annotations["summary"]
+			var description string
+			if val, ok := rule.Annotations["description"]; ok {
+				description = trimSpaceNewlineInString(val)
 			} else if val, ok := rule.Annotations["message"]; ok {
-				summary = replacePromQLInString(trimSpaceNewlineInString(val))
+				description = trimSpaceNewlineInString(val)
 			}
-			description := trimSpaceNewlineInString(rule.Annotations["description"])
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
 
