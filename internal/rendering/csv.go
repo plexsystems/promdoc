@@ -18,9 +18,9 @@ func RenderCSV(ruleGroups []promv1.RuleGroup) string {
 			summary := rule.Annotations["summary"]
 			var description string
 			if val, ok := rule.Annotations["description"]; ok {
-				description = trimSpaceNewlineInString(val)
+				description = replacePromQLInString(trimSpaceNewlineInString(val))
 			} else if val, ok := rule.Annotations["message"]; ok {
-				description = trimSpaceNewlineInString(val)
+				description = replacePromQLInString(trimSpaceNewlineInString(val))
 			}
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
