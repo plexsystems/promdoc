@@ -22,9 +22,9 @@ func testMarkdown(t *testing.T, filename string) {
 }
 
 func TestMarkdownWithDescription(t *testing.T) {
-	testCSV(t, "../../examples/rule.yaml")
+	testMarkdown(t, "../../examples/rule.yaml")
 }
 
 func TestMarkdownWithMessage(t *testing.T) {
-	testCSV(t, "../../examples/rule2.yaml")
+	testMarkdown(t, "../../examples/rule2.yaml")
 }
