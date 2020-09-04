@@ -1,2 +1,3 @@
 Name,RuleGroup,Summary,Description,Severity,Runbook
 TestAlert,TestGroup,TestSummary,TestDescription,TestSeverity,TestRunbookURL
+TestAlert,TestGroup,TestSummary,TestDescription,TestSeverity,TestRunbookURL
