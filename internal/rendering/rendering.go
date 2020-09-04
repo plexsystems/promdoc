@@ -114,3 +114,8 @@ func trimSpaceNewlineInString(s string) string {
 	re := regexp.MustCompile(`\r?\n|\| `)
 	return re.ReplaceAllString(s, " ")
 }
+
+func replacePromQLInString(s string) string {
+	re := regexp.MustCompile(` \| `)
+	return re.ReplaceAllString(s, " \\| ")
+}
