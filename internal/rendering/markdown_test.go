@@ -5,26 +5,19 @@ import (
 	"testing"
 )
 
-func testMarkdown(t *testing.T, filename string) {
-	expected, err := ioutil.ReadFile("../../examples/markdown/expected.md")
+func TestMarkdown(t *testing.T) {
+	expectedBytes, err := ioutil.ReadFile("../../examples/markdown/expected.md")
 	if err != nil {
-		t.Fatal("read expected file")
+		t.Fatal("read:", err)
 	}
 
-	actual, err := Render(filename, ".md")
+	actual, err := Render("../../examples", ".md")
 	if err != nil {
-		t.Fatal("getting rule groups:", err)
+		t.Fatal("render:", err)
 	}
 
-	if string(expected) != actual {
-		t.Error("rendered markdown did not match expected output")
+	expected := string(expectedBytes)
+	if expected != actual {
+		t.Errorf("Unexpected markdown. expected %v, actual %v", expected, actual)
 	}
-}
-
-func TestMarkdownWithDescription(t *testing.T) {
-	testMarkdown(t, "../../examples/rule.yaml")
-}
-
-func TestMarkdownWithMessage(t *testing.T) {
-	testMarkdown(t, "../../examples/rule2.yaml")
 }
