@@ -20,7 +20,7 @@ func RenderMarkdown(ruleGroups []promv1.RuleGroup) string {
 			continue
 		}
 
-		document += "* [" + ruleGroup.Name + "](#" + strings.ReplaceAll(ruleGroup.Name, " ", "-") + ")"
+		document += "* [" + ruleGroup.Name + "](#" + strings.ToLower(strings.ReplaceAll(ruleGroup.Name, " ", "-")) + ")"
 		document += "\n"
 
 		printingGroup = ruleGroup.Name
