@@ -12,7 +12,7 @@ func NewDefaultCommand() *cobra.Command {
 	cmd := cobra.Command{
 		Use:     path.Base(os.Args[0]),
 		Short:   "Create documentation from Prometheus rules",
-		Version: "0.5.0",
+		Version: "0.6.0",
 	}
 
 	cmd.AddCommand(NewGenerateCommand())
