@@ -9,13 +9,36 @@ import (
 	"regexp"
 	"sort"
 
-	v1 "github.com/coreos/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/ghodss/yaml"
 )
 
 var (
 	errInvalidOutput = errors.New("output format not supported")
 )
+
+type TypeMeta struct {
+	Kind string `json:"kind"`
+}
+
+type PrometheusRule struct {
+	Spec PrometheusRuleSpec `json:"spec"`
+}
+
+type PrometheusRuleSpec struct {
+	Groups []RuleGroup `json:"groups"`
+}
+
+type RuleGroup struct {
+	Name  string `json:"name"`
+	Rules []Rule `json:"rules"`
+}
+
+type Rule struct {
+	Record      string            `json:"record"`
+	Alert       string            `json:"alert"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+}
 
 // Render renders rule groups in a specific output format
 func Render(path string, outputType string) (string, error) {
@@ -34,8 +57,8 @@ func Render(path string, outputType string) (string, error) {
 	}
 }
 
-func getRuleGroups(path string) ([]v1.RuleGroup, error) {
-	var ruleGroups []v1.RuleGroup
+func getRuleGroups(path string) ([]RuleGroup, error) {
+	var ruleGroups []RuleGroup
 
 	files, err := getYamlFiles(path)
 	if err != nil {
@@ -48,17 +71,21 @@ func getRuleGroups(path string) ([]v1.RuleGroup, error) {
 			return nil, fmt.Errorf("open file: %w", err)
 		}
 
-		var prometheusRule v1.PrometheusRule
+		var typeMeta TypeMeta
+		if err := yaml.Unmarshal(fileContent, &typeMeta); err != nil {
+			continue
+		}
+
+		if typeMeta.Kind != "PrometheusRule" {
+			continue
+		}
+
+		var prometheusRule PrometheusRule
 		if err := yaml.Unmarshal(fileContent, &prometheusRule); err != nil {
 			continue
 		}
 
-		if prometheusRule.Kind != "PrometheusRule" {
-			continue
-		}
-
 		for _, group := range prometheusRule.Spec.Groups {
-
 			var hasAlert bool
 			for _, rule := range group.Rules {
 				if rule.Alert != "" {
@@ -110,12 +137,12 @@ func getYamlFiles(path string) ([]string, error) {
 	return files, nil
 }
 
-func trimSpaceNewlineInString(s string) string {
-	re := regexp.MustCompile(`\r?\n|\| `)
-	return re.ReplaceAllString(s, " ")
-}
+func trimText(text string) string {
+	newline := regexp.MustCompile(`\r?\n|\| `)
+	text = newline.ReplaceAllString(text, " ")
 
-func replacePromQLInString(s string) string {
-	re := regexp.MustCompile(` \| `)
-	return re.ReplaceAllString(s, " \\| ")
+	prom := regexp.MustCompile(` \| `)
+	text = prom.ReplaceAllString(text, " \\| ")
+
+	return text
 }

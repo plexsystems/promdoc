@@ -3,12 +3,10 @@ package rendering
 import (
 	"fmt"
 	"strings"
-
-	promv1 "github.com/coreos/prometheus-operator/pkg/apis/monitoring/v1"
 )
 
-// RenderMarkdown renders Markdown
-func RenderMarkdown(ruleGroups []promv1.RuleGroup) string {
+// RenderMarkdown renders Markdown.
+func RenderMarkdown(ruleGroups []RuleGroup) string {
 	document := "# Alerts"
 	document += "\n\n"
 
@@ -46,13 +44,14 @@ func RenderMarkdown(ruleGroups []promv1.RuleGroup) string {
 				continue
 			}
 
-			summary := rule.Annotations["summary"]
 			var description string
 			if val, ok := rule.Annotations["description"]; ok {
-				description = replacePromQLInString(trimSpaceNewlineInString(val))
+				description = trimText(val)
 			} else if val, ok := rule.Annotations["message"]; ok {
-				description = replacePromQLInString(trimSpaceNewlineInString(val))
+				description = trimText(val)
 			}
+
+			summary := rule.Annotations["summary"]
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
 			if runbookURL != "" {

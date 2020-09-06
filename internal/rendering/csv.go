@@ -2,12 +2,10 @@ package rendering
 
 import (
 	"fmt"
-
-	promv1 "github.com/coreos/prometheus-operator/pkg/apis/monitoring/v1"
 )
 
 // RenderCSV renders CSV
-func RenderCSV(ruleGroups []promv1.RuleGroup) string {
+func RenderCSV(ruleGroups []RuleGroup) string {
 	document := "Name,RuleGroup,Summary,Description,Severity,Runbook\n"
 	for _, ruleGroup := range ruleGroups {
 		for _, rule := range ruleGroup.Rules {
@@ -15,13 +13,14 @@ func RenderCSV(ruleGroups []promv1.RuleGroup) string {
 				continue
 			}
 
-			summary := rule.Annotations["summary"]
 			var description string
 			if val, ok := rule.Annotations["description"]; ok {
-				description = replacePromQLInString(trimSpaceNewlineInString(val))
+				description = trimText(val)
 			} else if val, ok := rule.Annotations["message"]; ok {
-				description = replacePromQLInString(trimSpaceNewlineInString(val))
+				description = trimText(val)
 			}
+
+			summary := rule.Annotations["summary"]
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
 
