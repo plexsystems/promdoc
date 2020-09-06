@@ -1,12 +1,12 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: test-rule
+  name: test-message-rule
 spec:
   groups:
-  - name: TestGroup
+  - name: Message
     rules:
-    - alert: TestAlert
+    - alert: MessageAlert
       annotations:
         summary: TestSummary
         message: TestMessage

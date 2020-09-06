@@ -2,11 +2,17 @@
 
 ## Rule Groups
 
-* [TestGroup](#testgroup)
+* [Description](#description)
+* [Message](#message)
 
-## TestGroup
+## Description
 
 |Name|Summary|Description|Severity|Runbook|
 |---|---|---|---|---|
-|TestAlert|TestSummary|TestDescription|TestSeverity|[TestRunbookURL](TestRunbookURL)|
-|TestAlert|TestSummary|TestMessage|TestSeverity|[TestRunbookURL](TestRunbookURL)|
+|DescriptionAlert|TestSummary|TestDescription|TestSeverity|[TestRunbookURL](TestRunbookURL)|
+
+## Message
+
+|Name|Summary|Description|Severity|Runbook|
+|---|---|---|---|---|
+|MessageAlert|TestSummary|TestMessage|TestSeverity|[TestRunbookURL](TestRunbookURL)|

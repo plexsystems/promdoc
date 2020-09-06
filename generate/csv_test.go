@@ -1,4 +1,4 @@
-package rendering
+package generate
 
 import (
 	"io/ioutil"
@@ -6,14 +6,14 @@ import (
 )
 
 func TestCSV(t *testing.T) {
-	expectedBytes, err := ioutil.ReadFile("../../examples/csv/expected.csv")
+	expectedBytes, err := ioutil.ReadFile("../examples/csv/expected.csv")
 	if err != nil {
 		t.Fatal("read:", err)
 	}
 
-	actual, err := Render("../../examples", ".csv")
+	actual, err := Generate("../examples", ".csv")
 	if err != nil {
-		t.Fatal("render:", err)
+		t.Fatal("generate:", err)
 	}
 
 	expected := string(expectedBytes)

@@ -1,4 +1,4 @@
-package rendering
+package generate
 
 import (
 	"errors"
@@ -12,99 +12,96 @@ import (
 	"github.com/ghodss/yaml"
 )
 
-var (
-	errInvalidOutput = errors.New("output format not supported")
-)
-
-type TypeMeta struct {
+type typeMeta struct {
 	Kind string `json:"kind"`
 }
 
-type PrometheusRule struct {
-	Spec PrometheusRuleSpec `json:"spec"`
+type prometheusRule struct {
+	Spec prometheusRuleSpec `json:"spec"`
 }
 
-type PrometheusRuleSpec struct {
-	Groups []RuleGroup `json:"groups"`
+type prometheusRuleSpec struct {
+	Groups []ruleGroup `json:"groups"`
 }
 
-type RuleGroup struct {
+type ruleGroup struct {
 	Name  string `json:"name"`
-	Rules []Rule `json:"rules"`
+	Rules []rule `json:"rules"`
 }
 
-type Rule struct {
-	Record      string            `json:"record"`
+type rule struct {
 	Alert       string            `json:"alert"`
 	Labels      map[string]string `json:"labels"`
 	Annotations map[string]string `json:"annotations"`
 }
 
-// Render renders rule groups in a specific output format
-func Render(path string, outputType string) (string, error) {
-	ruleGroups, err := getRuleGroups(path)
-	if err != nil {
-		return "", fmt.Errorf("get rule groups: %w", err)
-	}
-
-	switch outputType {
+// Generate finds all rules at the given path and its
+// subdirectories and generates documentation with the
+// specified file extension, including the period.
+func Generate(path string, output string) (string, error) {
+	switch output {
 	case ".md":
-		return RenderMarkdown(ruleGroups), nil
+		return Markdown(path)
 	case ".csv":
-		return RenderCSV(ruleGroups), nil
+		return CSV(path)
 	default:
-		return "", errInvalidOutput
+		return "", errors.New("output format not supported")
 	}
 }
 
-func getRuleGroups(path string) ([]RuleGroup, error) {
-	var ruleGroups []RuleGroup
-
+func getRuleGroups(path string) ([]ruleGroup, error) {
 	files, err := getYamlFiles(path)
 	if err != nil {
 		return nil, fmt.Errorf("get yaml files: %w", err)
 	}
 
+	var alertGroups []ruleGroup
 	for _, file := range files {
-		fileContent, err := ioutil.ReadFile(file)
+		fileBytes, err := ioutil.ReadFile(file)
 		if err != nil {
 			return nil, fmt.Errorf("open file: %w", err)
 		}
 
-		var typeMeta TypeMeta
-		if err := yaml.Unmarshal(fileContent, &typeMeta); err != nil {
+		var typeMeta typeMeta
+		if err := yaml.Unmarshal(fileBytes, &typeMeta); err != nil {
 			continue
 		}
-
 		if typeMeta.Kind != "PrometheusRule" {
 			continue
 		}
 
-		var prometheusRule PrometheusRule
-		if err := yaml.Unmarshal(fileContent, &prometheusRule); err != nil {
+		var prometheusRule prometheusRule
+		if err := yaml.Unmarshal(fileBytes, &prometheusRule); err != nil {
 			continue
 		}
 
 		for _, group := range prometheusRule.Spec.Groups {
-			var hasAlert bool
+			var alertRules []rule
 			for _, rule := range group.Rules {
-				if rule.Alert != "" {
-					hasAlert = true
-					break
+				if rule.Alert == "" {
+					continue
 				}
+
+				alertRules = append(alertRules, rule)
 			}
 
-			if hasAlert {
-				ruleGroups = append(ruleGroups, group)
+			if len(alertRules) == 0 {
+				continue
 			}
+
+			alertGroup := ruleGroup{
+				Name:  group.Name,
+				Rules: alertRules,
+			}
+			alertGroups = append(alertGroups, alertGroup)
 		}
 	}
 
-	sort.Slice(ruleGroups, func(i int, j int) bool {
-		return ruleGroups[i].Name < ruleGroups[j].Name
+	sort.Slice(alertGroups, func(i int, j int) bool {
+		return alertGroups[i].Name < alertGroups[j].Name
 	})
 
-	return ruleGroups, nil
+	return alertGroups, nil
 }
 
 func getYamlFiles(path string) ([]string, error) {

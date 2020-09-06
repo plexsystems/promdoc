@@ -1,18 +1,18 @@
-package rendering
+package generate
 
-import (
-	"fmt"
-)
+import "fmt"
 
-// RenderCSV renders CSV
-func RenderCSV(ruleGroups []RuleGroup) string {
+// CSV finds all rules at the given path and its
+// subdirectories and generates a CSV file of the found rules.
+func CSV(path string) (string, error) {
+	ruleGroups, err := getRuleGroups(path)
+	if err != nil {
+		return "", fmt.Errorf("get rule groups: %w", err)
+	}
+
 	document := "Name,RuleGroup,Summary,Description,Severity,Runbook\n"
 	for _, ruleGroup := range ruleGroups {
 		for _, rule := range ruleGroup.Rules {
-			if rule.Alert == "" {
-				continue
-			}
-
 			var description string
 			if val, ok := rule.Annotations["description"]; ok {
 				description = trimText(val)
@@ -24,9 +24,10 @@ func RenderCSV(ruleGroups []RuleGroup) string {
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
 
-			document += fmt.Sprintf("%s,%s,%s,%s,%s,%s\n", rule.Alert, ruleGroup.Name, summary, description, severity, runbookURL)
+			document += fmt.Sprintf("%s,%s,%s,%s,%s,%s", rule.Alert, ruleGroup.Name, summary, description, severity, runbookURL)
+			document += "\n"
 		}
 	}
 
-	return document
+	return document, nil
 }

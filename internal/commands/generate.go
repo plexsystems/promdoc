@@ -6,13 +6,13 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/plexsystems/promdoc/generate"
+
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	"github.com/plexsystems/promdoc/internal/rendering"
 )
 
-// NewGenerateCommand creates a new generate command
+// NewGenerateCommand creates a new generate command.
 func NewGenerateCommand() *cobra.Command {
 	cmd := cobra.Command{
 		Use:   "generate <directory>",
@@ -50,13 +50,13 @@ func runGenerateCommand(path string) error {
 		outputPath = filepath.Join(outputPath, "alerts.md")
 	}
 
-	output, err := rendering.Render(path, filepath.Ext(outputPath))
+	output, err := generate.Generate(path, filepath.Ext(outputPath))
 	if err != nil {
 		return fmt.Errorf("render: %w", err)
 	}
 
 	if err := ioutil.WriteFile(outputPath, []byte(output), os.ModePerm); err != nil {
-		return fmt.Errorf("write document: %w", err)
+		return fmt.Errorf("write file: %w", err)
 	}
 
 	return nil

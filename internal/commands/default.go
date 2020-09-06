@@ -7,12 +7,15 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// NewDefaultCommand creates a new default command
+// version is the version of the CLI, and it is set at build time.
+var version string
+
+// NewDefaultCommand creates a new default command.
 func NewDefaultCommand() *cobra.Command {
 	cmd := cobra.Command{
 		Use:     path.Base(os.Args[0]),
 		Short:   "Create documentation from Prometheus rules",
-		Version: "0.6.0",
+		Version: version,
 	}
 
 	cmd.AddCommand(NewGenerateCommand())
