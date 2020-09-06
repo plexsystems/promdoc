@@ -26,7 +26,7 @@ $ promdoc generate
 Optionally, you can specify a directory to generate alerts for. This will look at the specified directory and its subdirectories:
 
 ```shell
-$ promdoc generate myalertsdirectory
+$ promdoc generate alertsdirectory
 ```
 
 To generate the output in `CSV`, include the `.csv` extension in the output:
