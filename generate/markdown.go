@@ -8,8 +8,8 @@ import (
 // Markdown finds all rules at the given path and its
 // subdirectories and generates Markdown documentation
 // from the found rules.
-func Markdown(path string) (string, error) {
-	ruleGroups, err := getRuleGroups(path)
+func Markdown(path string, input string) (string, error) {
+	ruleGroups, err := getRuleGroups(path, input)
 	if err != nil {
 		return "", fmt.Errorf("get rule groups: %w", err)
 	}

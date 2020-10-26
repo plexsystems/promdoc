@@ -22,6 +22,10 @@ func NewGenerateCommand() *cobra.Command {
 			if err := viper.BindPFlag("out", cmd.Flags().Lookup("out")); err != nil {
 				return fmt.Errorf("bind out flag: %w", err)
 			}
+			if err := viper.BindPFlag("in", cmd.Flags().Lookup("in")); err != nil {
+				return fmt.Errorf("bind in flag: %w", err)
+			}
+
 			return nil
 		},
 
@@ -40,7 +44,7 @@ func NewGenerateCommand() *cobra.Command {
 	}
 
 	cmd.Flags().StringP("out", "o", "alerts.md", "File name or directory for the alert documentation")
-
+	cmd.Flags().StringP("in", "i", "kubernetes", "Alert style: Kubernetes or Mixin")
 	return &cmd
 }
 
@@ -50,7 +54,9 @@ func runGenerateCommand(path string) error {
 		outputPath = filepath.Join(outputPath, "alerts.md")
 	}
 
-	output, err := generate.Generate(path, filepath.Ext(outputPath))
+	input := viper.GetString("in")
+
+	output, err := generate.Generate(path, filepath.Ext(outputPath), input)
 	if err != nil {
 		return fmt.Errorf("render: %w", err)
 	}
