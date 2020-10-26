@@ -3,36 +3,11 @@ package generate
 import (
 	"errors"
 	"fmt"
-	// "io/ioutil"
 	"os"
 	"path/filepath"
 	"regexp"
 	"sort"
-	// "github.com/ghodss/yaml"
 )
-
-// type typeMeta struct {
-// 	Kind string `json:"kind"`
-// }
-
-// type prometheusRule struct {
-// 	Spec prometheusRuleSpec `json:"spec"`
-// }
-
-// type prometheusRuleSpec struct {
-// 	Groups []ruleGroup `json:"groups"`
-// }
-
-// type ruleGroup struct {
-// 	Name  string `json:"name"`
-// 	Rules []rule `json:"rules"`
-// }
-
-// type rule struct {
-// 	Alert       string            `json:"alert"`
-// 	Labels      map[string]string `json:"labels"`
-// 	Annotations map[string]string `json:"annotations"`
-// }
 
 // Generate finds all rules at the given path and its
 // subdirectories and generates documentation with the
@@ -54,50 +29,7 @@ func getRuleGroups(path string, input string) ([]ruleGroup, error) {
 		return nil, fmt.Errorf("get yaml files: %w", err)
 	}
 
-	// var alertGroups []ruleGroup
-	// for _, file := range files {
-	// 	fileBytes, err := ioutil.ReadFile(file)
-	// 	if err != nil {
-	// 		return nil, fmt.Errorf("open file: %w", err)
-	// 	}
-
-	// 	var typeMeta typeMeta
-	// 	if err := yaml.Unmarshal(fileBytes, &typeMeta); err != nil {
-	// 		continue
-	// 	}
-	// 	if typeMeta.Kind != "PrometheusRule" {
-	// 		continue
-	// 	}
-
-	// 	var prometheusRule prometheusRule
-	// 	if err := yaml.Unmarshal(fileBytes, &prometheusRule); err != nil {
-	// 		continue
-	// 	}
-
-	// 	for _, group := range prometheusRule.Spec.Groups {
-	// 		var alertRules []rule
-	// 		for _, rule := range group.Rules {
-	// 			if rule.Alert == "" {
-	// 				continue
-	// 			}
-
-	// 			alertRules = append(alertRules, rule)
-	// 		}
-
-	// 		if len(alertRules) == 0 {
-	// 			continue
-	// 		}
-
-	// 		alertGroup := ruleGroup{
-	// 			Name:  group.Name,
-	// 			Rules: alertRules,
-	// 		}
-	// 		alertGroups = append(alertGroups, alertGroup)
-	// 	}
-	// }
-
 	var alertGroups []ruleGroup
-	// fmt.Printf("Mixin: %s\n", input)
 	if "kubernetes" == input {
 		alertGroups, err = getKubernetesRuleGroups(files)
 		if err != nil {

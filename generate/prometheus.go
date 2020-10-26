@@ -1,13 +1,8 @@
 package generate
 
 import (
-	// "errors"
 	"fmt"
 	"io/ioutil"
-	// "os"
-	// "path/filepath"
-	// "regexp"
-	// "sort"
 
 	"github.com/ghodss/yaml"
 )
@@ -85,7 +80,6 @@ func getKubernetesRuleGroups(files []string) ([]ruleGroup, error) {
 
 		for _, group := range prometheusRule.Spec.Groups {
 			alertGroup, err := extractGroupAlerts(group)
-			fmt.Printf("===============> %v\n", alertGroup)
 			if err != nil {
 				return nil, err
 			}
@@ -99,7 +93,6 @@ func getKubernetesRuleGroups(files []string) ([]ruleGroup, error) {
 }
 
 func extractGroupAlerts(group ruleGroup) (*ruleGroup, error) {
-	fmt.Printf("############## %v", group)
 	var alertRules []rule
 	for _, rule := range group.Rules {
 		if rule.Alert == "" {
@@ -117,6 +110,5 @@ func extractGroupAlerts(group ruleGroup) (*ruleGroup, error) {
 		Name:  group.Name,
 		Rules: alertRules,
 	}
-	fmt.Printf("===> %v\n", alertGroup)
 	return &alertGroup, nil
 }
