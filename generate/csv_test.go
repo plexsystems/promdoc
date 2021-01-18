@@ -11,7 +11,7 @@ func TestCSV(t *testing.T) {
 		t.Fatal("read:", err)
 	}
 
-	actual, err := Generate("../examples", ".csv")
+	actual, err := Generate("../examples", ".csv", "kubernetes")
 	if err != nil {
 		t.Fatal("generate:", err)
 	}

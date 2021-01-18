@@ -11,7 +11,7 @@ func TestMarkdown(t *testing.T) {
 		t.Fatal("read:", err)
 	}
 
-	actual, err := Generate("../examples", ".md")
+	actual, err := Generate("../examples", ".md", "kubernetes")
 	if err != nil {
 		t.Fatal("generate:", err)
 	}
