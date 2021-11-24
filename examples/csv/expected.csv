@@ -1,3 +1,5 @@
 Name,RuleGroup,Summary,Description,Severity,Runbook
 DescriptionAlert,Description,TestSummary,TestDescription,TestSeverity,TestRunbookURL
 MessageAlert,Message,TestSummary,TestMessage,TestSeverity,TestRunbookURL
+Alert1,MultiAlert1,TestSummary1,TestAlert1,TestSeverity1,TestRunbookURL1
+Alert2,MultiAlert2,TestSummary2,TestAlert2,TestSeverity2,TestRunbookURL2
