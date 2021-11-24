@@ -30,7 +30,7 @@ func getRuleGroups(path string, input string) ([]ruleGroup, error) {
 	}
 
 	var alertGroups []ruleGroup
-	if "kubernetes" == input {
+	if input == "kubernetes" {
 		alertGroups, err = getKubernetesRuleGroups(files)
 		if err != nil {
 			return nil, err

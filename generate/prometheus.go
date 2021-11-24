@@ -1,10 +1,12 @@
 package generate
 
 import (
+	"bytes"
 	"fmt"
+	"io"
 	"io/ioutil"
 
-	"github.com/ghodss/yaml"
+	"gopkg.in/yaml.v2"
 )
 
 type typeMeta struct {
@@ -30,6 +32,29 @@ type rule struct {
 	Annotations map[string]string `json:"annotations"`
 }
 
+func splitYAML(resources []byte) ([][]byte, error) {
+
+	dec := yaml.NewDecoder(bytes.NewReader(resources))
+
+	var res [][]byte
+	for {
+		var value interface{}
+		err := dec.Decode(&value)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, err
+		}
+		valueBytes, err := yaml.Marshal(value)
+		if err != nil {
+			return nil, err
+		}
+		res = append(res, valueBytes)
+	}
+	return res, nil
+}
+
 func getMixinRuleGroups(files []string) ([]ruleGroup, error) {
 	var alertGroups []ruleGroup
 
@@ -39,21 +64,27 @@ func getMixinRuleGroups(files []string) ([]ruleGroup, error) {
 			return nil, fmt.Errorf("open file: %w", err)
 		}
 
-		var groups prometheusRuleSpec
-		if err := yaml.Unmarshal(fileBytes, &groups); err != nil {
-			continue
+		var byteSlices [][]byte
+		byteSlices, err = splitYAML([]byte(fileBytes))
+		if err != nil {
+			return nil, fmt.Errorf("splitting yaml: %w", err)
 		}
 
-		for _, group := range groups.Groups {
-			alertGroup, err := extractGroupAlerts(group)
-			if err != nil {
-				return nil, err
+		for _, byteSlice := range byteSlices {
+			var groups prometheusRuleSpec
+			if err := yaml.Unmarshal(byteSlice, &groups); err != nil {
+				continue
 			}
-			alertGroups = append(alertGroups, *alertGroup)
+
+			for _, group := range groups.Groups {
+				alertGroup, err := extractGroupAlerts(group)
+				if err != nil {
+					return nil, err
+				}
+				alertGroups = append(alertGroups, *alertGroup)
+			}
 		}
-
 	}
-
 	return alertGroups, nil
 }
 
@@ -65,26 +96,34 @@ func getKubernetesRuleGroups(files []string) ([]ruleGroup, error) {
 			return nil, fmt.Errorf("open file: %w", err)
 		}
 
-		var typeMeta typeMeta
-		if err := yaml.Unmarshal(fileBytes, &typeMeta); err != nil {
-			continue
-		}
-		if typeMeta.Kind != "PrometheusRule" {
-			continue
+		var byteSlices [][]byte
+		byteSlices, err = splitYAML([]byte(fileBytes))
+		if err != nil {
+			return nil, fmt.Errorf("splitting yaml: %w", err)
 		}
 
-		var prometheusRule prometheusRule
-		if err := yaml.Unmarshal(fileBytes, &prometheusRule); err != nil {
-			continue
-		}
-
-		for _, group := range prometheusRule.Spec.Groups {
-			alertGroup, err := extractGroupAlerts(group)
-			if err != nil {
-				return nil, err
+		for _, byteSlice := range byteSlices {
+			var typeMeta typeMeta
+			if err := yaml.Unmarshal(byteSlice, &typeMeta); err != nil {
+				continue
 			}
-			if alertGroup != nil {
-				alertGroups = append(alertGroups, *alertGroup)
+			if typeMeta.Kind != "PrometheusRule" {
+				continue
+			}
+
+			var prometheusRule prometheusRule
+			if err := yaml.Unmarshal(byteSlice, &prometheusRule); err != nil {
+				continue
+			}
+
+			for _, group := range prometheusRule.Spec.Groups {
+				alertGroup, err := extractGroupAlerts(group)
+				if err != nil {
+					return nil, err
+				}
+				if alertGroup != nil {
+					alertGroups = append(alertGroups, *alertGroup)
+				}
 			}
 		}
 
