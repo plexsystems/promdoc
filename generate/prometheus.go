@@ -33,25 +33,27 @@ type rule struct {
 }
 
 func splitYAML(resources []byte) ([][]byte, error) {
-
 	dec := yaml.NewDecoder(bytes.NewReader(resources))
 
 	var res [][]byte
 	for {
 		var value interface{}
-		err := dec.Decode(&value)
-		if err == io.EOF {
-			break
+		if err := dec.Decode(&value); err != nil {
+			if err == io.EOF {
+				break
+			}
+
+			return nil, fmt.Errorf("decode: %w", err)
 		}
-		if err != nil {
-			return nil, err
-		}
+
 		valueBytes, err := yaml.Marshal(value)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("marshal: %w", err)
 		}
+
 		res = append(res, valueBytes)
 	}
+
 	return res, nil
 }
 
@@ -79,12 +81,14 @@ func getMixinRuleGroups(files []string) ([]ruleGroup, error) {
 			for _, group := range groups.Groups {
 				alertGroup, err := extractGroupAlerts(group)
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("extract group alerts: %w", err)
 				}
+
 				alertGroups = append(alertGroups, *alertGroup)
 			}
 		}
 	}
+
 	return alertGroups, nil
 }
 
@@ -119,8 +123,9 @@ func getKubernetesRuleGroups(files []string) ([]ruleGroup, error) {
 			for _, group := range prometheusRule.Spec.Groups {
 				alertGroup, err := extractGroupAlerts(group)
 				if err != nil {
-					return nil, err
+					return nil, fmt.Errorf("extract group alerts: %w", err)
 				}
+
 				if alertGroup != nil {
 					alertGroups = append(alertGroups, *alertGroup)
 				}
@@ -149,5 +154,6 @@ func extractGroupAlerts(group ruleGroup) (*ruleGroup, error) {
 		Name:  group.Name,
 		Rules: alertRules,
 	}
+
 	return &alertGroup, nil
 }

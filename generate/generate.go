@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"sort"
+	"strings"
 )
 
 // Generate finds all rules at the given path and its
@@ -30,17 +31,18 @@ func getRuleGroups(path string, input string) ([]ruleGroup, error) {
 	}
 
 	var alertGroups []ruleGroup
-	if input == "kubernetes" {
+	if strings.EqualFold(input, "kubernetes") {
 		alertGroups, err = getKubernetesRuleGroups(files)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("get kubernetes rule groups: %w", err)
 		}
 	} else {
 		alertGroups, err = getMixinRuleGroups(files)
 		if err != nil {
-			return nil, err
+			return nil, fmt.Errorf("get mixin rule groups: %w", err)
 		}
 	}
+
 	sort.Slice(alertGroups, func(i int, j int) bool {
 		return alertGroups[i].Name < alertGroups[j].Name
 	})
