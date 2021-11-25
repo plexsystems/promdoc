@@ -1,0 +1,32 @@
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-multi-rule1
+spec:
+  groups:
+    - name: MultiAlert1
+      rules:
+        - alert: Alert1
+          annotations:
+            summary: TestSummary1
+            message: TestAlert1
+            runbook_url: TestRunbookURL1
+          labels:
+            severity: TestSeverity1
+---
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: test-multi-rule2
+spec:
+  groups:
+    - name: MultiAlert2
+      rules:
+        - alert: Alert2
+          annotations:
+            summary: TestSummary2
+            description: TestAlert2
+            runbook_url: TestRunbookURL2
+          labels:
+            severity: TestSeverity2
