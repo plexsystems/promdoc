@@ -62,7 +62,7 @@ func Markdown(path string, input string) (string, error) {
 				runbookURL = fmt.Sprintf("[%s](%s)", runbookURL, runbookURL)
 			}
 
-			document += fmt.Sprintf("|%s|%s|%s|%s|%s|%s|%s|", rule.Alert, summary, description, severity, expr, rule.For, runbookURL)
+			document += fmt.Sprintf("|%s|%s|%s|%s|`%s`|%s|%s|", rule.Alert, summary, description, severity, expr, rule.For, runbookURL)
 			document += "\n"
 		}
 	}
