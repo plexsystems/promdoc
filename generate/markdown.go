@@ -39,10 +39,10 @@ func Markdown(path string, input string) (string, error) {
 			document += "## " + ruleGroup.Name
 			document += "\n\n"
 
-			document += "|Name|Summary|Description|Severity|Runbook|"
+			document += "|Name|Summary|Description|Severity|Expr|For|Runbook|"
 			document += "\n"
 
-			document += "|---|---|---|---|---|"
+			document += "|---|---|---|---|---|---|---|"
 			document += "\n"
 		}
 
@@ -54,6 +54,7 @@ func Markdown(path string, input string) (string, error) {
 				description = trimText(val)
 			}
 
+			expr := trimText(rule.Expr)
 			summary := rule.Annotations["summary"]
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
@@ -61,7 +62,7 @@ func Markdown(path string, input string) (string, error) {
 				runbookURL = fmt.Sprintf("[%s](%s)", runbookURL, runbookURL)
 			}
 
-			document += fmt.Sprintf("|%s|%s|%s|%s|%s|", rule.Alert, summary, description, severity, runbookURL)
+			document += fmt.Sprintf("|%s|%s|%s|%s|%s|%s|%s|", rule.Alert, summary, description, severity, expr, rule.For, runbookURL)
 			document += "\n"
 		}
 	}

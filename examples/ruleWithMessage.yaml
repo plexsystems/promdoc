@@ -4,12 +4,14 @@ metadata:
   name: test-message-rule
 spec:
   groups:
-  - name: Message
-    rules:
-    - alert: MessageAlert
-      annotations:
-        summary: TestSummary
-        message: TestMessage
-        runbook_url: TestRunbookURL
-      labels:
-        severity: TestSeverity
+    - name: Message
+      rules:
+        - alert: MessageAlert
+          expr: api_http_request_latencies_second{quantile="0.5"} > 1
+          for: 15m
+          annotations:
+            summary: TestSummary
+            message: TestMessage
+            runbook_url: TestRunbookURL
+          labels:
+            severity: TestSeverity

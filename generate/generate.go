@@ -86,6 +86,7 @@ func trimText(text string) string {
 
 	prom := regexp.MustCompile(` \| `)
 	text = prom.ReplaceAllString(text, " \\| ")
+	text = strings.TrimSpace(text)
 
 	return text
 }

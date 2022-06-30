@@ -28,6 +28,8 @@ type ruleGroup struct {
 
 type rule struct {
 	Alert       string            `json:"alert"`
+	Expr        string            `json:"expr"`
+	For         string            `json:"for"`
 	Labels      map[string]string `json:"labels"`
 	Annotations map[string]string `json:"annotations"`
 }

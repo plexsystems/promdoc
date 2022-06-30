@@ -8,6 +8,8 @@ spec:
     - name: MultiAlert1
       rules:
         - alert: Alert1
+          expr: job:request_latency_seconds:mean5m{job="myjob"} > 0.5
+          for: 2d
           annotations:
             summary: TestSummary1
             message: TestAlert1
@@ -24,6 +26,12 @@ spec:
     - name: MultiAlert2
       rules:
         - alert: Alert2
+          expr: |
+            (
+              predict_linear(prometheus_notifications_queue_length{job="prometheus"}[5m], 60 * 30)
+            >
+              min_over_time(prometheus_notifications_queue_capacity{job="prometheus"}[5m])
+            )
           annotations:
             summary: TestSummary2
             description: TestAlert2
