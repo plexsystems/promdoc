@@ -10,7 +10,7 @@ func CSV(path string, input string) (string, error) {
 		return "", fmt.Errorf("get rule groups: %w", err)
 	}
 
-	document := "Name,RuleGroup,Summary,Description,Severity,Runbook\n"
+	document := "Name,RuleGroup,Summary,Description,Severity,Expr,For,Runbook\n"
 	for _, ruleGroup := range ruleGroups {
 		for _, rule := range ruleGroup.Rules {
 			var description string
@@ -20,11 +20,12 @@ func CSV(path string, input string) (string, error) {
 				description = trimText(val)
 			}
 
+			expr := trimText(rule.Expr)
 			summary := rule.Annotations["summary"]
 			severity := rule.Labels["severity"]
 			runbookURL := rule.Annotations["runbook_url"]
 
-			document += fmt.Sprintf("%s,%s,%s,%s,%s,%s", rule.Alert, ruleGroup.Name, summary, description, severity, runbookURL)
+			document += fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s", rule.Alert, ruleGroup.Name, summary, description, severity, expr, rule.For, runbookURL)
 			document += "\n"
 		}
 	}

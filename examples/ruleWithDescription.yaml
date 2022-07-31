@@ -4,12 +4,14 @@ metadata:
   name: test-description-rule
 spec:
   groups:
-  - name: Description
-    rules:
-    - alert: DescriptionAlert
-      annotations:
-        summary: TestSummary
-        description: TestDescription
-        runbook_url: TestRunbookURL
-      labels:
-        severity: TestSeverity
+    - name: Description
+      rules:
+        - alert: DescriptionAlert
+          expr: up == 0
+          for: 1w
+          annotations:
+            summary: TestSummary
+            description: TestDescription
+            runbook_url: TestRunbookURL
+          labels:
+            severity: TestSeverity
