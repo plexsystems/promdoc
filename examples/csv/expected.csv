@@ -2,4 +2,5 @@ Name,RuleGroup,Summary,Description,Severity,Expr,For,Runbook
 DescriptionAlert,Description,TestSummary,TestDescription,TestSeverity,up == 0,1w,TestRunbookURL
 MessageAlert,Message,TestSummary,TestMessage,TestSeverity,api_http_request_latencies_second{quantile="0.5"} > 1,15m,TestRunbookURL
 Alert1,MultiAlert1,TestSummary1,TestAlert1,TestSeverity1,job:request_latency_seconds:mean5m{job="myjob"} > 0.5,2d,TestRunbookURL1
+Alert1,MultiAlert2,TestSummary1,TestAlert1,TestSeverity1,job:request_latency_seconds:mean5m{job="myjob"} > 0.5,,TestRunbookURL1
 Alert2,MultiAlert2,TestSummary2,TestAlert2,TestSeverity2,(   predict_linear(prometheus_notifications_queue_length{job="prometheus"}[5m], 60 * 30) >   min_over_time(prometheus_notifications_queue_capacity{job="prometheus"}[5m]) ),,TestRunbookURL2

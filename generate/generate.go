@@ -19,6 +19,8 @@ func Generate(path string, output string, input string) (string, error) {
 		return Markdown(path, input)
 	case ".csv":
 		return CSV(path, input)
+	case ".html":
+		return HTML(path, input)
 	default:
 		return "", errors.New("output format not supported")
 	}

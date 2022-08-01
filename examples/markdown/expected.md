@@ -29,4 +29,5 @@
 
 |Name|Summary|Description|Severity|Expr|For|Runbook|
 |---|---|---|---|---|---|---|
+|Alert1|TestSummary1|TestAlert1|TestSeverity1|`job:request_latency_seconds:mean5m{job="myjob"} > 0.5`||[TestRunbookURL1](TestRunbookURL1)|
 |Alert2|TestSummary2|TestAlert2|TestSeverity2|`(   predict_linear(prometheus_notifications_queue_length{job="prometheus"}[5m], 60 * 30) >   min_over_time(prometheus_notifications_queue_capacity{job="prometheus"}[5m]) )`||[TestRunbookURL2](TestRunbookURL2)|
